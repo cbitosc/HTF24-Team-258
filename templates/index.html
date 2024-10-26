@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Website SEO & Performance Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 800px; margin: auto; padding: 20px; }
+        input[type="url"] { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Website SEO & Performance Analyzer</h1>
+    <input type="url" id="urlInput" placeholder="Enter website URL" required>
+    <button onclick="analyzeUrl()">Analyze</button>
+
+    <h2>Results</h2>
+    <p id="results"></p>
+
+    <canvas id="seoChart" width="400" height="400"></canvas>
+</div>
+
+<script>
+async function analyzeUrl() {
+    const url = document.getElementById('urlInput').value;
+    const response = await fetch('/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url })
+    });
+
+    const data = await response.json();
+    displayResults(data);
+}
+
+function displayResults(data) {
+    document.getElementById('results').innerHTML = `
+        <p>SEO Score: ${data.seo_score.toFixed(2)}</p>
+        <p>Ping: ${data.ping ? data.ping.toFixed(2) + ' ms' : 'Unavailable'}</p>
+        <p>DNS Response Time: ${data.dns_response_time ? data.dns_response_time.toFixed(4) + ' s' : 'Unavailable'}</p>
+        <p>HTTPS Enabled: ${data.https_enabled ? 'Yes' : 'No'}</p>
+        <p>Title: ${data.title}</p>
+        <p>Meta Description: ${data.meta_description}</p>
+        <p>TTFB: ${data.ttfb ? data.ttfb.toFixed(4) + ' s' : 'Unavailable'}</p>
+        <p>Accessibility Score: ${data.accessibility_score.toFixed(2)}/100</p>
+    `;
+
+    const ctx = document.getElementById('seoChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['SEO Score', 'Ping Time', 'DNS Response Time', 'TTFB', 'Accessibility'],
+            datasets: [{
+                label: 'Performance Factors',
+                data: [
+                    data.seo_score,
+                    data.ping || 0,
+                    data.dns_response_time || 0,
+                    data.ttfb || 0,
+                    data.accessibility_score
+                ],
+                backgroundColor: ['#4CAF50', '#FF6384', '#36A2EB', '#FFCE56', '#FFA726']
+            }]
+        }
+    });
+}
+</script>
+</body>
+</html>
