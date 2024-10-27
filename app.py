@@ -131,7 +131,7 @@ def analyze_accessibility(url):
         (1 if len(soup.find_all("h1")) > 0 else 0) * 25 +
         (aria_count / 10 if aria_count > 0 else 0) * 25
     )
-    return accessibility_score
+    return accessibility_score if accessibility_score <= 100 else 100
 
 def analyze_with_pagespeed(url):
     api_key = 'AIzaSyC1XRxVYhW0SFh3z00ZPx9eawptNsg5gAQ'
