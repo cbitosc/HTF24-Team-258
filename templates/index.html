@@ -6,10 +6,79 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { max-width: 800px; margin: auto; padding: 20px; }
         input[type="url"] { width: 100%; padding: 10px; margin: 10px 0; }
         button { padding: 10px 20px; font-size: 16px; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        input[type="url"] {
+            width: 96.5%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s;
+        }
+        input[type="url"]:focus {
+            border-color: #36A2EB;
+            outline: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        h2 {
+            margin-top: 20px;
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .result-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        
+        .result-card:hover {
+            background-color: #f1f1f1;
+        }
+        canvas {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -39,14 +108,14 @@ async function analyzeUrl() {
 
 function displayResults(data) {
     document.getElementById('results').innerHTML = `
-        <p>SEO Score: ${data.seo_score.toFixed(2)}</p>
-        <p>Ping: ${data.ping ? data.ping.toFixed(2) + ' ms' : 'Unavailable'}</p>
-        <p>DNS Response Time: ${data.dns_response_time ? data.dns_response_time.toFixed(4) + ' s' : 'Unavailable'}</p>
-        <p>HTTPS Enabled: ${data.https_enabled ? 'Yes' : 'No'}</p>
-        <p>Title: ${data.title}</p>
-        <p>Meta Description: ${data.meta_description}</p>
-        <p>TTFB: ${data.ttfb ? data.ttfb.toFixed(4) + ' s' : 'Unavailable'}</p>
-        <p>Accessibility Score: ${data.accessibility_score.toFixed(2)}/100</p>
+        <p> <strong>SEO Score: </strong>${data.seo_score.toFixed(2)}</p>
+        <p> <strong>Ping: </strong>${data.ping ? data.ping.toFixed(2) +  'ms' : 'Unavailable'}</p>
+        <p> <strong>DNS Response Time: </strong> ${data.dns_response_time ? data.dns_response_time.toFixed(4) + ' s' : 'Unavailable'}</p>
+        <p> <strong>HTTPS Enabled: </strong> ${data.https_enabled ? 'Yes' : 'No'}</p>
+        <p> <strong>Title: </strong> ${data.title}</p>
+        <p><strong>Meta Description: </strong> ${data.meta_description}</p>
+        <p><strong>TTFB: </strong> ${data.ttfb ? data.ttfb.toFixed(4) + 's' : 'Unavailable'}</p>
+        <p><strong>Accessibility Score: </strong> ${data.accessibility_score.toFixed(2)}/100</p>
     `;
 
     const ctx = document.getElementById('seoChart').getContext('2d');
