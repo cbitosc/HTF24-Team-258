@@ -1,10 +1,10 @@
-
 from flask import Flask, render_template, request, jsonify
 import requests
 from bs4 import BeautifulSoup
 import time
 from urllib.parse import urlparse
 from ping3 import ping
+import json 
 import dns.resolver
 
 app = Flask(__name__)
@@ -133,6 +133,34 @@ def analyze_accessibility(url):
     )
     return accessibility_score
 
+def analyze_with_pagespeed(url):
+    api_key = 'AIzaSyC1XRxVYhW0SFh3z00ZPx9eawptNsg5gAQ'
+    endpoint = f"https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={url}&key={api_key}"
+    
+    try:
+        response = requests.get(endpoint)
+        if response.status_code == 200:
+            data = response.json()
+            if "lighthouseResult" in data:
+                insights = {
+                    "Performance Score": data["lighthouseResult"]["categories"]["performance"]["score"] * 100,
+                    "First Contentful Paint": data["lighthouseResult"]["audits"]["first-contentful-paint"]["displayValue"],
+                    "Largest Contentful Paint": data["lighthouseResult"]["audits"]["largest-contentful-paint"]["displayValue"],
+                    "Cumulative Layout Shift": data["lighthouseResult"]["audits"]["cumulative-layout-shift"]["displayValue"],
+                }
+                return insights
+            else:
+                print("Error: 'lighthouseResult' not found in the response data.")
+                return None
+        else:
+            print(f"Error: API returned status code {response.status_code}")
+            print("Response:", response.json())  # Print the error details
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
+
+
 # Flask routes
 
 @app.route('/')
@@ -149,6 +177,7 @@ def analyze():
     results['https_enabled'] = check_https(url)
     results['ttfb'] = get_ttfb(url)
     results['accessibility_score'] = analyze_accessibility(url)
+    results['pagespeed_insights'] = analyze_with_pagespeed(url)  # Integrate PageSpeed insights
     website_data = get_website_data(url)
     results.update(website_data)
     return jsonify(results)

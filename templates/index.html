@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Website SEO & Performance Analyzer</title>
+    <link rel="icon" href="{{ url_for('static', filename='magnifier.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
     <style>
@@ -107,30 +108,36 @@ async function analyzeUrl() {
 }
 
 function displayResults(data) {
+    const { seo_score, ping, dns_response_time, https_enabled, title, meta_description, ttfb, accessibility_score, pagespeed_insights } = data;
+
     document.getElementById('results').innerHTML = `
-        <p> <strong>SEO Score: </strong>${data.seo_score.toFixed(2)}</p>
-        <p> <strong>Ping: </strong>${data.ping ? data.ping.toFixed(2) +  'ms' : 'Unavailable'}</p>
-        <p> <strong>DNS Response Time: </strong> ${data.dns_response_time ? data.dns_response_time.toFixed(4) + ' s' : 'Unavailable'}</p>
-        <p> <strong>HTTPS Enabled: </strong> ${data.https_enabled ? 'Yes' : 'No'}</p>
-        <p> <strong>Title: </strong> ${data.title}</p>
-        <p><strong>Meta Description: </strong> ${data.meta_description}</p>
-        <p><strong>TTFB: </strong> ${data.ttfb ? data.ttfb.toFixed(4) + 's' : 'Unavailable'}</p>
-        <p><strong>Accessibility Score: </strong> ${data.accessibility_score.toFixed(2)}/100</p>
-    `;
+        <p><strong>SEO Score: </strong>${seo_score.toFixed(2)}</p>
+        <p><strong>Ping: </strong>${ping ? ping.toFixed(2) + ' ms' : 'Unavailable'}</p>
+        <p><strong>DNS Response Time: </strong>${dns_response_time ? dns_response_time.toFixed(4) + ' s' : 'Unavailable'}</p>
+        <p><strong>HTTPS Enabled: </strong>${https_enabled ? 'Yes' : 'No'}</p>
+        <p><strong>Title: </strong>${title}</p>
+        <p><strong>Meta Description: </strong>${meta_description}</p>
+        <p><strong>TTFB: </strong>${ttfb ? ttfb.toFixed(4) + ' s' : 'Unavailable'}</p>
+        <p><strong>Accessibility Score: </strong>${accessibility_score.toFixed(2)}/100</p>
+        <p><strong>Performance Score: </strong>${pagespeed_insights ? pagespeed_insights['Performance Score'] : 'Unavailable'}</p>
+        <p><strong>First Contentful Paint: </strong>${pagespeed_insights ? pagespeed_insights['First Contentful Paint'] : 'Unavailable'}</p>
+        <p><strong>Largest Contentful Paint: </strong>${pagespeed_insights ? pagespeed_insights['Largest Contentful Paint'] : 'Unavailable'}</p>
+        <p><strong>Cumulative Layout Shift: </strong>${pagespeed_insights ? pagespeed_insights['Cumulative Layout Shift'] : 'Unavailable'}</p>
+        `;
 
     const ctx = document.getElementById('seoChart').getContext('2d');
     new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['SEO Score', 'Ping Time', 'DNS Response Time', 'TTFB', 'Accessibility'],
+            labels: ['SEO Score', 'Ping Time', 'DNS Response Time', 'TTFB', 'Accessibility Score'],
             datasets: [{
-                label: 'Performance Factors',
+                label: 'Performance Metrics',
                 data: [
-                    data.seo_score,
-                    data.ping || 0,
-                    data.dns_response_time || 0,
-                    data.ttfb || 0,
-                    data.accessibility_score
+                    seo_score,
+                    ping || 0,
+                    dns_response_time || 0,
+                    ttfb || 0,
+                    accessibility_score
                 ],
                 backgroundColor: ['#4CAF50', '#FF6384', '#36A2EB', '#FFCE56', '#FFA726']
             }]
