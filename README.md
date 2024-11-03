@@ -1,76 +1,39 @@
-# HTF24-Team-258
+# SEO Optimization and Accessibility Analysis Flask Application
 
-## GitHub submission guide
+This project is a Flask-based web application designed to analyze SEO performance, page accessibility, and various web metrics for a given URL. It includes a series of custom functions to assess parameters like page load time, HTTPS support, metadata availability, image optimization, and more. The tool outputs an SEO score, accessibility insights, and additional diagnostic data to help improve a website's SEO and user experience.
 
-In this Readme, you will find a guide on how to fork this Repository, add files to it, and make a pull request to contribute your changes.
+## Features
 
-<details open>
-<summary><h3>1. Login to your GitHub Account by heading over to <a href="https://github.com">github.com</a></h3></summary>
-<br>
-<ul>
-   <li>Open the <a href="https://github.com/cbitosc/HTF24-Team-258">current repo</a> in a new tab.</li>
-   <li>Perform all operations in the newly opened tab, and follow the current tab for instructions.</li>
-</ul>
-</details>
+- **SEO Score Calculation**: Analyzes key SEO factors and provides an overall score based on parameters such as load time, HTTPS presence, meta tags, image optimization, and mobile-friendliness.
+- **Accessibility Analysis**: Checks for alt attributes on images, labels on form inputs, heading structure, and ARIA attributes for accessibility.
+- **Performance Metrics**:
+  - **Ping Time**: Measures response time from the server.
+  - **DNS Response Time**: Calculates the time taken for DNS resolution.
+  - **Time to First Byte (TTFB)**: Measures the time it takes for the server to start responding.
+- **Meta Data Extraction**: Fetches the title and description of the website, if available.
+- **Content Size Analysis**: Determines the size of the page content in KB.
 
-<details>
-<summary><h3>2. Fork the Repository</h3></summary>
-<br>
-<ul>
- <li>In the newly opened tab, on the top-right corner, click on <b>Fork</b></li>
- <img src="/images/fork.png">
+## Technologies Used
 
- <li>Enter the <b>Repository Name</b> as <b>HTF24-Team-258</b>.</li>
- <li>Then click <b>Create Fork</b> leaving all other fields to their default value.</li>
- <img src="/images/create-fork.png">
- <li>After a few moments, you can view the repo.</li>
-</ul>
-</details>
+- **Flask**: Backend framework for handling HTTP requests.
+- **BeautifulSoup**: For HTML parsing to extract metadata and assess accessibility.
+- **Requests**: To make HTTP requests and analyze page load performance.
+- **ping3**: To measure ping response time.
+- **dnspython**: For DNS resolution timing.
 
-<details>
-<summary><h3>3. Clone your Repository</h3></summary>
-<br>
-<ul>
- <li>Click on <b>Code</b> and from the dropdown menu copy your <b>web URL</b> in your forked Repository. </li>
- <img src="/images/clone1.png">
- <li>Now open terminal on your local machine.</li>
- <li>Use the following command to clone your forked Repository:</li>
-<code> git clone https://github.com/your-username/HTF24-Team-258.git </code>
-<hr>
- <img src="/images/clone2.png">
+## Getting Started
 
-</ul>
-</details>
+### Prerequisites
 
-<details>
-<summary><h3>4. Adding files to the Repository</h3></summary>
-<br/>
-<ul>
- <li>While doing it for the first time, create a new branch for your changes.</li>
-   <code> git checkout -b branch-name </code>
-   <li>Add your files or make modifications to existing files.</li>
-   <li>Stage your changes:</li>
-   <code> git add . </code>
-   <li>Commit your changes:</li>
-   <code> git commit -m "Descriptive commit message" </code>
-   <li>Push changes to your fork </li>
-   <code> git push origin branch-name </code>
-   <hr>
-   
- <img src="/images/push.png">
-</ul>
-</details>
+- **Python 3.6+**
+- **Flask**: `pip install flask`
+- **BeautifulSoup4**: `pip install beautifulsoup4`
+- **Requests**: `pip install requests`
+- **ping3**: `pip install ping3`
+- **dnspython**: `pip install dnspython`
 
-<details>
-<summary><h3>5. Create a Pull Request</h3></summary>
-   <br>
-<ul>
- <li>Finally, click on the <b>Contribute</b> button and choose <b>Open Pull Request</b>.</li>
- <img src="/images/PR1.png">
- <li>Leaving all fields to their default values, click on <b>Create Pull Request</b>.</li>
- <img src="/images/PR2.png">
- <li>Wait for a few moments, then you are all done</li>
-</ul>
-</details>
+### Installation
 
-## Thanks for participating!
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/yourrepository.git

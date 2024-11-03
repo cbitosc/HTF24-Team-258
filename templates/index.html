@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Website SEO & Performance Analyzer</title>
+    <link rel="icon" href="{{ url_for('static', filename='magnifier.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+    <style>
+        input[type="url"] { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; font-size: 16px; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        input[type="url"] {
+            width: 96.5%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s;
+        }
+        input[type="url"]:focus {
+            border-color: #36A2EB;
+            outline: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        h2 {
+            margin-top: 20px;
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .result-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        .result-card:hover {
+            background-color: #f1f1f1;
+        }
+        canvas {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        /* Loader Styling */
+        #loader {
+            display: none;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #4CAF50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Website SEO & Performance Analyzer</h1>
+    <input type="url" id="urlInput" placeholder="Enter website URL" required>
+    <button onclick="analyzeUrl()">Analyze</button>
+
+    <!-- Loader -->
+    <div id="loader"></div>
+
+    <h2>Results</h2>
+    <p id="results"></p>
+
+    <canvas id="seoChart" width="400" height="400"></canvas>
+</div>
+
+<script>
+async function analyzeUrl() {
+    // Show loader
+    document.getElementById('loader').style.display = 'block';
+    
+    const url = document.getElementById('urlInput').value;
+    const response = await fetch('/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url })
+    });
+
+    const data = await response.json();
+    displayResults(data);
+
+    // Hide loader
+    document.getElementById('loader').style.display = 'none';
+}
+
+function displayResults(data) {
+    const { seo_score, ping, dns_response_time, https_enabled, title, meta_description, ttfb, accessibility_score, pagespeed_insights } = data;
+
+    document.getElementById('results').innerHTML = `
+        <p><strong>SEO Score: </strong>${seo_score.toFixed(2)}</p>
+        <p><strong>Ping: </strong>${ping ? ping.toFixed(2) + ' ms' : 'Unavailable'}</p>
+        <p><strong>DNS Response Time: </strong>${dns_response_time ? dns_response_time.toFixed(4) + ' s' : 'Unavailable'}</p>
+        <p><strong>HTTPS Enabled: </strong>${https_enabled ? 'Yes' : 'No'}</p>
+        <p><strong>Title: </strong>${title}</p>
+        <p><strong>Meta Description: </strong>${meta_description}</p>
+        <p><strong>TTFB: </strong>${ttfb ? ttfb.toFixed(4) + ' s' : 'Unavailable'}</p>
+        <p><strong>Accessibility Score: </strong>${accessibility_score.toFixed(2)}/100</p>
+        <p><strong>Performance Score: </strong>${pagespeed_insights ? pagespeed_insights['Performance Score'] : 'Unavailable'}</p>
+        <p><strong>First Contentful Paint: </strong>${pagespeed_insights ? pagespeed_insights['First Contentful Paint'] : 'Unavailable'}</p>
+        <p><strong>Largest Contentful Paint: </strong>${pagespeed_insights ? pagespeed_insights['Largest Contentful Paint'] : 'Unavailable'}</p>
+        <p><strong>Cumulative Layout Shift: </strong>${pagespeed_insights ? pagespeed_insights['Cumulative Layout Shift'] : 'Unavailable'}</p>
+        `;
+
+    const ctx = document.getElementById('seoChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['SEO Score', 'Ping Time', 'DNS Response Time', 'TTFB', 'Accessibility Score'],
+            datasets: [{
+                label: 'Performance Metrics',
+                data: [
+                    seo_score,
+                    ping || 0,
+                    dns_response_time || 0,
+                    ttfb || 0,
+                    accessibility_score
+                ],
+                backgroundColor: ['#4CAF50', '#FF6384', '#36A2EB', '#FFCE56', '#FFA726']
+            }]
+        }
+    });
+}
+</script>
+</body>
+</html>
